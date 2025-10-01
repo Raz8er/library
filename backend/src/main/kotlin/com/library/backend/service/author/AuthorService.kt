@@ -55,11 +55,11 @@ class AuthorService(
         return PageImpl(result, pageable, authors.totalElements)
     }
 
-    fun getAuthorsCursor(cursorPageRequest: CursorPageRequest): CursorPageResponse<AuthorWithPublishedBooksProjection> {
+    fun getAuthorsByCursor(cursorPageRequest: CursorPageRequest): CursorPageResponse<AuthorWithPublishedBooksProjection> {
         val cursor = cursorPageRequest.cursor?.let { AuthorCursor.decode(it) }
         val pageSize = cursorPageRequest.size!!
         val sortBy = AuthorSort.getEnumValue(cursorPageRequest.sortBy!!)
-        val authors = getAuthorsCursor(sortBy, cursor, pageSize)
+        val authors = getAuthorsByCursor(sortBy, cursor, pageSize)
 
         val nextCursor =
             authors.lastOrNull()?.let {
@@ -73,7 +73,7 @@ class AuthorService(
         return CursorPageResponse(authors, nextCursor)
     }
 
-    private fun getAuthorsCursor(
+    private fun getAuthorsByCursor(
         sortBy: AuthorSort,
         cursor: AuthorCursor?,
         pageSize: Int,

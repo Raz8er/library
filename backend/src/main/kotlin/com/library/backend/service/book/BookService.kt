@@ -58,7 +58,7 @@ class BookService(
         return PageImpl(sortedBooks, pageable, pageOfIds.totalElements)
     }
 
-    fun searchBooksCursor(
+    fun searchBooksByCursor(
         filter: BookFilter,
         cursorPageRequest: CursorPageRequest,
     ): CursorPageResponse<BookEntity> {

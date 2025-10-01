@@ -12,9 +12,7 @@ enum class BookGenre(
     ;
 
     companion object {
-        fun getEnumValue(text: String?): BookGenre =
-            entries.firstOrNull { it.text.equals(text, ignoreCase = true) }
-                ?: throw IllegalArgumentException("Book genre value $text not found")
+        fun getEnumValue(text: String?): BookGenre? = entries.find { it.text.equals(text, ignoreCase = true) }
 
         fun isValidBookGenre(value: String): Boolean = BookGenre.entries.any { it.text.equals(value, ignoreCase = true) }
     }
