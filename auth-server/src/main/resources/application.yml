@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: auth-server
+
+server:
+  port: 8888
+  servlet:
+    context-path: /library/auth-server
+
+logging:
+  level:
+    root: INFO
+    com.assignment.authserver: DEBUG
+    org.springframework.web: ERROR

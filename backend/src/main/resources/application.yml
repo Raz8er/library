@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: library
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: mysecretpassword
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: library
+        format_sql: true
+        jdbc:
+          batch_size: 50
+          time_zone: UTC
+        order_inserts: true
+        order_updates: true
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    default-schema: library
+    baseline-on-migrate: true
+    validate-migration-naming: true
+    locations:
+      - classpath:db/migration
+      - classpath:db/data
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 60000
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8888/library/auth-server/api/v1/jwks.json
+
+server:
+  port: 8082
+  servlet:
+    context-path: /library
+
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.orm.jdbc.bind: trace
