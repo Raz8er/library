@@ -42,13 +42,24 @@ class OpenApiConfig {
     }
 
     @Bean
-    fun publicOpenApi(): GroupedOpenApi {
+    fun publicOpenApiV1(): GroupedOpenApi {
         val path = "/api/v1/public/**"
         return GroupedOpenApi
             .builder()
-            .group("public")
+            .group("public-v1")
             .pathsToMatch(path)
-            .addOpenApiCustomizer(publicOpenApiCustomizer())
+            .addOpenApiCustomizer(publicOpenApiV1Customizer())
+            .build()
+    }
+
+    @Bean
+    fun publicOpenApiV2(): GroupedOpenApi {
+        val path = "/api/v2/public/**"
+        return GroupedOpenApi
+            .builder()
+            .group("public-v2")
+            .pathsToMatch(path)
+            .addOpenApiCustomizer(publicOpenApiV2Customizer())
             .build()
     }
 
@@ -76,11 +87,19 @@ class OpenApiConfig {
             openApi.components(components)
         }
 
-    private fun publicOpenApiCustomizer(): OpenApiCustomizer = OpenApiCustomizer { openApi: OpenAPI -> openApi.info(publicApiInfo()) }
+    private fun publicOpenApiV1Customizer(): OpenApiCustomizer = OpenApiCustomizer { openApi: OpenAPI -> openApi.info(publicApiV1Info()) }
 
-    private fun publicApiInfo(): Info =
+    private fun publicApiV1Info(): Info =
         Info()
-            .title("Public API")
+            .title("Public API V1")
             .description("API used by public audience for searching authors and books.")
             .version("v1")
+
+    private fun publicOpenApiV2Customizer(): OpenApiCustomizer = OpenApiCustomizer { openApi: OpenAPI -> openApi.info(publicApiV2Info()) }
+
+    private fun publicApiV2Info(): Info =
+        Info()
+            .title("Public API V2")
+            .description("API used by public audience for searching authors and books.")
+            .version("v2")
 }
