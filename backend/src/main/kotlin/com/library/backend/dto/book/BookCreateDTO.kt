@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
-import org.intellij.lang.annotations.RegExp
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
@@ -15,7 +15,7 @@ data class BookCreateDTO(
     var title: String?,
     @field:NotBlank
     @field:Size(max = 17)
-    @field:RegExp("([0-9]){3}-([0-9]){2}-([0-9]){5}-([0-9]){2}-([0-9])")
+    @field:Pattern("([0-9]){3}-([0-9]){2}-([0-9]){5}-([0-9]){2}-([0-9])")
     var isbn: String?,
     @field:NotNull
     var genre: BookGenre?,

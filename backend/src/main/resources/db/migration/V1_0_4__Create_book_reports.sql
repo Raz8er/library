@@ -1,4 +1,4 @@
-CREATE TABLE book_reports
+CREATE TABLE IF NOT EXISTS book_reports
 (
     id             BIGSERIAL PRIMARY KEY,
     generated_at   TIMESTAMP                DEFAULT NOW(),
@@ -10,7 +10,7 @@ CREATE TABLE book_reports
 
 CREATE INDEX IF NOT EXISTS book_reports_generated_at_idx ON book_reports (generated_at);
 
-CREATE TABLE book_report_isbns
+CREATE TABLE IF NOT EXISTS book_report_isbns
 (
     book_report_id BIGINT      NOT NULL REFERENCES book_reports (id) ON DELETE CASCADE,
     isbn           VARCHAR(20) NOT NULL
