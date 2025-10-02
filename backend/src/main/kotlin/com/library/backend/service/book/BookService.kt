@@ -7,9 +7,9 @@ import com.library.backend.dto.cursor.CursorPageRequest
 import com.library.backend.dto.cursor.CursorPageResponse
 import com.library.backend.entity.BookEntity
 import com.library.backend.entity.specification.BookSpecification
+import com.library.backend.event.service.EventNotifier
 import com.library.backend.mapper.BookMapper.toEntity
 import com.library.backend.repository.BookRepository
-import com.library.backend.service.author.AuthorCacheService
 import com.library.backend.service.author.AuthorService
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 class BookService(
     private val bookRepository: BookRepository,
     private val authorService: AuthorService,
-    private val authorCacheService: AuthorCacheService,
+    private val eventNotifier: EventNotifier,
 ) {
     @Transactional
     fun createBook(dto: BookCreateDTO): BookEntity {
@@ -39,7 +39,7 @@ class BookService(
             throw EntityNotFoundException("Authors not found for ids: ${dto.authorIds}")
         }
         authors.forEach { entity.addAuthor(it) }
-        authors.forEach { authorCacheService.evictAuthor(it.id!!) }
+        authors.forEach { eventNotifier.publishAuthorEvent(it.id!!) }
         return bookRepository.save(entity)
     }
 

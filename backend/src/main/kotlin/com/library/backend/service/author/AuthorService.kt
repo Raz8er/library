@@ -8,6 +8,7 @@ import com.library.backend.dto.cursor.CursorPageRequest
 import com.library.backend.dto.cursor.CursorPageResponse
 import com.library.backend.entity.AuthorEntity
 import com.library.backend.entity.projection.AuthorWithPublishedBooksProjection
+import com.library.backend.event.service.EventNotifier
 import com.library.backend.mapper.AuthorMapper.toEntity
 import com.library.backend.mapper.AuthorMapper.updateEntity
 import com.library.backend.repository.AuthorRepository
@@ -26,6 +27,7 @@ import java.time.ZonedDateTime
 class AuthorService(
     private val authorRepository: AuthorRepository,
     private val authorCacheService: AuthorCacheService,
+    private val eventNotifier: EventNotifier,
 ) {
     @Transactional
     fun createAuthor(author: AuthorCreateDTO): AuthorEntity = authorRepository.save(author.toEntity())
@@ -41,7 +43,7 @@ class AuthorService(
                     authorId,
                 ).orElseThrow { EntityNotFoundException("Author with id $authorId not found") }
         val updatedEntity = dto.toEntity()
-        authorCacheService.evictAuthor(authorId)
+        eventNotifier.publishAuthorEvent(authorId)
         return authorRepository.save(existingEntity.updateEntity(updatedEntity))
     }
 
