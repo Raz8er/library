@@ -10,7 +10,6 @@ import com.library.backend.mapper.BookMapper.toDTO
 import com.library.backend.service.author.AuthorService
 import com.library.backend.service.book.BookService
 import com.library.backend.utils.ResponseEntityUtils
-import jakarta.annotation.security.PermitAll
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -28,7 +27,6 @@ class PublicController(
     private val authorService: AuthorService,
     private val bookService: BookService,
 ) {
-    @PermitAll
     @GetMapping("/authors")
     fun getAuthors(
         @PageableDefault(sort = ["createdAt"], direction = Sort.Direction.DESC) pageable: Pageable,
@@ -37,7 +35,6 @@ class PublicController(
         return ResponseEntityUtils.createResponse(body, HttpStatus.OK)
     }
 
-    @PermitAll
     @GetMapping("/books")
     fun searchBooks(
         @RequestParam(required = false) title: String?,

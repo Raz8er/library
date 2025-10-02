@@ -13,7 +13,6 @@ import com.library.backend.mapper.BookMapper.toDTO
 import com.library.backend.service.author.AuthorService
 import com.library.backend.service.book.BookService
 import com.library.backend.utils.ResponseEntityUtils
-import jakarta.annotation.security.PermitAll
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,7 +26,6 @@ class PublicControllerV2(
     private val authorService: AuthorService,
     private val bookService: BookService,
 ) {
-    @PermitAll
     @GetMapping("/authors")
     fun getAuthors(
         @RequestParam(required = false) cursor: String?,
@@ -43,7 +41,6 @@ class PublicControllerV2(
         return ResponseEntityUtils.createResponse(body, HttpStatus.OK)
     }
 
-    @PermitAll
     @GetMapping("/books")
     fun searchBooks(
         @RequestParam(required = false) title: String?,
