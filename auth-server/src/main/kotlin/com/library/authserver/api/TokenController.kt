@@ -21,7 +21,7 @@ class TokenController(
     private val tokenService: TokenService,
 ) {
     @PostMapping("/token", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
-    fun getToken(
+    fun generateToken(
         @RequestParam("clientId") clientId: String,
         @RequestParam("clientSecret") clientSecret: String,
         @RequestParam("grant_type") grantType: String,

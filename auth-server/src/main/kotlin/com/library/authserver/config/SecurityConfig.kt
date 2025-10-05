@@ -26,7 +26,7 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.util.UUID
+import java.util.*
 
 @Configuration
 @EnableWebSecurity
@@ -53,12 +53,13 @@ class SecurityConfig {
                 auth
                     .requestMatchers(HttpMethod.GET, "/api/v1/jwks.json")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/clients")
-                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/v1/clients",
+                        "/api/v1/token",
+                    ).permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/clients/**")
                     .authenticated()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/token")
-                    .permitAll()
                     .anyRequest()
                     .authenticated()
             }.authenticationProvider(clientAuthenticationProvider)
