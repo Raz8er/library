@@ -29,7 +29,7 @@ class AuditTransactionConfig {
             }
 
             private fun setAuditUserOnCurrentConnection(dataSource: DataSource) {
-                val currentUser = SecurityContextHolder.getContext().authentication.name
+                val currentUser = SecurityContextHolder.getContext().authentication.name ?: return
                 val safe = currentUser.replace("'", "''")
                 val conn = DataSourceUtils.getConnection(dataSource)
                 conn.createStatement().use {
