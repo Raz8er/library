@@ -1,6 +1,8 @@
 package com.library.authserver.api.error
 
+import com.library.authserver.exception.ClientAlreadyExistsException
 import com.library.authserver.exception.InvalidClientCredentialsException
+import com.library.authserver.exception.InvalidGrantTypeException
 import com.library.authserver.utils.ResponseEntityUtils
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
@@ -120,6 +122,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             )
         ex.parameterValidationResults.forEach {
             apiError.addValidationError(
+                message = it.resolvableErrors.first().defaultMessage,
                 field = it.methodParameter.parameterName,
                 rejectedValue = it.argument,
             )
@@ -129,8 +132,20 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(InvalidClientCredentialsException::class)
     fun handleInvalidClientCredentialsException(ex: InvalidClientCredentialsException): ResponseEntity<Any?> {
-        val apiError = ApiError(ex.status, ex.message, ex)
-        return ResponseEntityUtils.createResponse(apiError, HttpStatus.UNAUTHORIZED)
+        val apiError = ApiError(status = ex.status, message = ex.message)
+        return ResponseEntityUtils.createResponse(apiError, ex.status)
+    }
+
+    @ExceptionHandler(ClientAlreadyExistsException::class)
+    fun handleClientAlreadyExistsException(ex: ClientAlreadyExistsException): ResponseEntity<Any?> {
+        val apiError = ApiError(status = ex.status, message = ex.message)
+        return ResponseEntityUtils.createResponse(apiError, ex.status)
+    }
+
+    @ExceptionHandler(InvalidGrantTypeException::class)
+    fun handleInvalidGrantTypeException(ex: InvalidGrantTypeException): ResponseEntity<Any?> {
+        val apiError = ApiError(status = ex.status, message = ex.message)
+        return ResponseEntityUtils.createResponse(apiError, ex.status)
     }
 
     @ExceptionHandler(ConstraintViolationException::class)

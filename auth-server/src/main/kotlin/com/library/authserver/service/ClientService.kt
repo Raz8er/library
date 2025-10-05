@@ -2,10 +2,13 @@ package com.library.authserver.service
 
 import com.library.authserver.dto.client.ClientRequestDTO
 import com.library.authserver.dto.client.ClientResponseDTO
+import com.library.authserver.exception.ClientAlreadyExistsException
+import com.library.authserver.exception.InvalidClientCredentialsException
 import com.library.authserver.repository.InMemoryClientRepository
-import com.library.authserver.utils.PasswordGenerator
-import org.springframework.security.crypto.factory.PasswordEncoderFactories
+import com.library.authserver.utils.ClientSecretUtils
+import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.AuthorizationGrantType
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.stereotype.Service
@@ -17,33 +20,53 @@ class ClientService(
     private val clientRepository: InMemoryClientRepository,
 ) {
     companion object {
-        private val passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
+        private const val TOKEN_TTL_MINUTES = 10L
     }
 
     fun registerClient(client: ClientRequestDTO): ClientResponseDTO {
-        val existingClient = clientRepository.findWithSecret(client.clientId!!)
+        val existingClient = clientRepository.findByClientId(client.clientId!!)
         if (existingClient != null) {
-            return ClientResponseDTO(existingClient.client.clientId, existingClient.rawSecret)
+            throw ClientAlreadyExistsException()
         }
-        val randomPassword = PasswordGenerator.generate()
-        val encodedPassword = passwordEncoder.encode(randomPassword)
+        val clientSecret = ClientSecretUtils.generateClientSecret()
         val client =
             RegisteredClient
                 .withId(UUID.randomUUID().toString())
                 .clientId(client.clientId)
-                .clientSecret(encodedPassword)
+                .clientSecret(ClientSecretUtils.hashClientSecret(clientSecret))
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(10)).build())
+                .tokenSettings(
+                    TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(TOKEN_TTL_MINUTES)).build(),
+                ).build()
+        clientRepository.save(client)
+        return ClientResponseDTO(client.clientId, clientSecret)
+    }
+
+    fun rotateClientSecret(
+        clientId: String,
+        authentication: Authentication,
+    ): ClientResponseDTO {
+        if (clientId != authentication.name) {
+            throw InvalidClientCredentialsException()
+        }
+        val existingClient = clientRepository.findByClientId(clientId) ?: throw InvalidClientCredentialsException()
+        val newClientSecret = ClientSecretUtils.generateClientSecret()
+        val updatedClient =
+            RegisteredClient
+                .from(existingClient)
+                .clientSecret(ClientSecretUtils.hashClientSecret(newClientSecret))
                 .build()
-        clientRepository.saveWithSecret(client, randomPassword)
-        return ClientResponseDTO(client.clientId, randomPassword)
+        clientRepository.save(updatedClient)
+        return ClientResponseDTO(clientId, newClientSecret)
     }
 
     fun isValidClient(
         clientId: String,
         clientSecret: String,
     ): Boolean {
-        val existingClient = clientRepository.findWithSecret(clientId) ?: return false
-        return passwordEncoder.matches(clientSecret, existingClient.client.clientSecret)
+        val existingClient = clientRepository.findByClientId(clientId) ?: return false
+        val storedHashSecret = existingClient.clientSecret!!
+        return ClientSecretUtils.isClientSecretValid(clientSecret, storedHashSecret)
     }
 }

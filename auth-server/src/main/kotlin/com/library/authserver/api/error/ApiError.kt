@@ -42,14 +42,14 @@ data class ApiError(
         rejectedValue: Any? = null,
         message: String? = null,
     ) {
-        addSubError(ApiValidationError(obj, field, rejectedValue, message))
+        addSubError(ApiValidationError(obj = obj, message = message, field = field, rejectedValue = rejectedValue))
     }
 
     private fun addValidationError(
         obj: String,
         message: String?,
     ) {
-        addSubError(ApiValidationError(obj, message))
+        addSubError(ApiValidationError(obj = obj, message = message))
     }
 
     private fun addValidationError(fieldError: FieldError) {

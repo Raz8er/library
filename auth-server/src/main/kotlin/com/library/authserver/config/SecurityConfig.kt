@@ -1,5 +1,6 @@
 package com.library.authserver.config
 
+import com.library.authserver.auth.ClientAuthenticationProvider
 import com.library.authserver.utils.Constants
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.jwk.JWKSet
@@ -25,11 +26,11 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.util.*
+import java.util.UUID
 
 @Configuration
 @EnableWebSecurity
-class AuthServerConfig {
+class SecurityConfig {
     @Bean
     @Order(1)
     fun authServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -37,17 +38,32 @@ class AuthServerConfig {
         http
             .securityMatcher(authorizationServerConfigurer.endpointsMatcher)
             .with(authorizationServerConfigurer, Customizer.withDefaults())
+            .csrf { it.disable() }
+        return http.build()
+    }
+
+    @Bean
+    @Order(2)
+    fun apiSecurityFilterChain(
+        http: HttpSecurity,
+        clientAuthenticationProvider: ClientAuthenticationProvider,
+    ): SecurityFilterChain {
+        http
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers(HttpMethod.GET, "/api/v1/jwks.json")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/clients")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/token")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/clients/**")
                     .authenticated()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/token")
+                    .permitAll()
                     .anyRequest()
                     .authenticated()
-            }.csrf { it.disable() }
+            }.authenticationProvider(clientAuthenticationProvider)
+            .httpBasic(Customizer.withDefaults())
+            .csrf { it.disable() }
         return http.build()
     }
 

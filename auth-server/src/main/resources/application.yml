@@ -10,5 +10,5 @@ server:
 logging:
   level:
     root: INFO
-    com.assignment.authserver: DEBUG
+    com.library.authserver: DEBUG
     org.springframework.web: ERROR
