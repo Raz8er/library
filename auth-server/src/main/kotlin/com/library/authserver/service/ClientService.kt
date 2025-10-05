@@ -24,8 +24,7 @@ class ClientService(
     }
 
     fun registerClient(client: ClientRequestDTO): ClientResponseDTO {
-        val existingClient = clientRepository.findByClientId(client.clientId!!)
-        if (existingClient != null) {
+        if (clientExists(client)) {
             throw ClientAlreadyExistsException()
         }
         val clientSecret = ClientSecretUtils.generateClientSecret()
@@ -69,4 +68,6 @@ class ClientService(
         val storedHashSecret = existingClient.clientSecret!!
         return ClientSecretUtils.isClientSecretValid(clientSecret, storedHashSecret)
     }
+
+    private fun clientExists(client: ClientRequestDTO): Boolean = clientRepository.existsByClientId(client.clientId)
 }

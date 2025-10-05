@@ -16,4 +16,6 @@ class InMemoryClientRepository : RegisteredClientRepository {
     override fun findById(id: String?): RegisteredClient? = clients.values.find { it.id == id }
 
     override fun findByClientId(clientId: String?): RegisteredClient? = clients[clientId]
+
+    fun existsByClientId(clientId: String?): Boolean = clients.containsKey(clientId)
 }
