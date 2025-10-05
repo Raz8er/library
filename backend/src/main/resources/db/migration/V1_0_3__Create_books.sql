@@ -14,3 +14,5 @@ CREATE TABLE IF NOT EXISTS books
 CREATE INDEX IF NOT EXISTS books_title_idx ON books (lower((title)));
 CREATE INDEX IF NOT EXISTS books_genre_idx ON books (lower((genre)));
 CREATE INDEX IF NOT EXISTS books_publishing_date_time_idx ON books (publishing_date_time);
+
+SELECT create_audit_for_table('library', 'books');

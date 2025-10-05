@@ -17,3 +17,6 @@ CREATE TABLE IF NOT EXISTS book_report_isbns
 );
 
 CREATE INDEX IF NOT EXISTS book_report_isbns_book_report_id_idx ON book_report_isbns (book_report_id);
+
+SELECT create_audit_for_table('library', 'book_reports');
+SELECT create_audit_for_table('library', 'book_report_isbns');

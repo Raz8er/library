@@ -7,3 +7,5 @@ CREATE TABLE IF NOT EXISTS books_authors
 
 CREATE INDEX IF NOT EXISTS books_authors_book_id_idx ON books_authors(book_id);
 CREATE INDEX IF NOT EXISTS books_authors_author_id_idx ON books_authors(author_id);
+
+SELECT create_audit_for_table('library', 'books_authors');

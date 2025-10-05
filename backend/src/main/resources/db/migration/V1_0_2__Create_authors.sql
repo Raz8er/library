@@ -9,3 +9,5 @@ CREATE TABLE IF NOT EXISTS authors
 
 CREATE INDEX IF NOT EXISTS authors_name_idx ON authors (lower((name)));
 CREATE INDEX IF NOT EXISTS authors_created_at_idx ON authors (created_at);
+
+SELECT create_audit_for_table('library', 'authors');
