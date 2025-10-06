@@ -43,6 +43,11 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://localhost:8888/library/auth-server/api/v1/jwks.json
+    user:
+      admin:
+        username: admin
+        password: secret123
+        roles: ADMIN
 
 server:
   port: 8082

@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
@@ -19,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableMethodSecurity
 class SecurityConfig(
     private val passwordEncoder: PasswordEncoder,
+    private val adminUser: AdminUser,
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -47,9 +47,9 @@ class SecurityConfig(
         val admin =
             User
                 .builder()
-                .username("admin")
-                .password(passwordEncoder.encode("secret123"))
-                .roles("ADMIN")
+                .username(adminUser.username)
+                .password(passwordEncoder.encode(adminUser.password))
+                .roles(*adminUser.roles.toTypedArray())
                 .build()
         return InMemoryUserDetailsManager(admin)
     }
