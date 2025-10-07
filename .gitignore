@@ -79,3 +79,4 @@ replay_pid*
 
 auth-server/.gitattributes
 backend/.gitattributes
+.testcontainer.properties
