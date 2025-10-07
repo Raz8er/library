@@ -73,7 +73,17 @@ interface AuthorRepository : JpaRepository<AuthorEntity, Long> {
             ) AS numberOfPublishedBooks
         )
         FROM AuthorEntity a
-        WHERE (a.createdAt < :createdAt OR (a.createdAt = :createdAt AND a.id < :authorId))
+        WHERE (
+            CAST(:createdAt AS TIMESTAMP) IS NULL
+            OR a.createdAt < :createdAt
+            OR (
+                a.createdAt = :createdAt 
+                AND (
+                    :authorId IS NULL
+                    OR a.id < :authorId
+                )
+            )
+        )
         ORDER BY a.createdAt DESC, a.id DESC
     """,
     )
@@ -81,7 +91,7 @@ interface AuthorRepository : JpaRepository<AuthorEntity, Long> {
         createdAt: ZonedDateTime?,
         authorId: Long?,
         pageable: Pageable,
-    ): List<AuthorWithPublishedBooksProjection>
+    ): Page<AuthorWithPublishedBooksProjection>
 
     @Query(
         """
@@ -102,7 +112,13 @@ interface AuthorRepository : JpaRepository<AuthorEntity, Long> {
         WHERE (
             :numberOfPublishedBooks IS NULL
             OR bc.bookCount < :numberOfPublishedBooks
-            OR (bc.bookCount = :numberOfPublishedBooks AND a.id < :authorId)
+            OR (
+                bc.bookCount = :numberOfPublishedBooks 
+                AND (
+                    :authorId IS NULL
+                    OR a.id < :authorId
+                )
+            )
         )
         ORDER BY bc.bookCount DESC, a.id DESC
     """,
@@ -111,5 +127,5 @@ interface AuthorRepository : JpaRepository<AuthorEntity, Long> {
         numberOfPublishedBooks: Long?,
         authorId: Long?,
         pageable: Pageable,
-    ): List<AuthorWithPublishedBooksProjection>
+    ): Page<AuthorWithPublishedBooksProjection>
 }

@@ -61,10 +61,10 @@ class AuthorService(
         val cursor = cursorPageRequest.cursor?.let { AuthorCursor.decode(it) }
         val pageSize = cursorPageRequest.size!!
         val sortBy = AuthorSort.getEnumValue(cursorPageRequest.sortBy!!)
-        val authors = getAuthorsByCursor(sortBy, cursor, pageSize)
+        val authorsPage = getAuthorsByCursor(sortBy, cursor, pageSize)
 
         val nextCursor =
-            authors.lastOrNull()?.let {
+            authorsPage.content.lastOrNull()?.let {
                 AuthorCursor(
                     createdAt = it.createdAt.toLocalDateTime(),
                     numberOfPublishedBooks = it.numberOfPublishedBooks,
@@ -72,14 +72,14 @@ class AuthorService(
                 ).encode()
             }
 
-        return CursorPageResponse(authors, nextCursor)
+        return CursorPageResponse(authorsPage.content, nextCursor)
     }
 
     private fun getAuthorsByCursor(
         sortBy: AuthorSort,
         cursor: AuthorCursor?,
         pageSize: Int,
-    ): List<AuthorWithPublishedBooksProjection> =
+    ): Page<AuthorWithPublishedBooksProjection> =
         when (sortBy) {
             AuthorSort.BOOKS -> {
                 authorRepository.findAuthorsByNumberOfPublishedBooksCursor(

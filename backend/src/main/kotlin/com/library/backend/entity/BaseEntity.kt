@@ -24,7 +24,9 @@ class BaseEntity(
 ) {
     @PrePersist
     fun prePersist() {
-        createdAt = ZonedDateTime.now()
+        if (createdAt == null) {
+            createdAt = ZonedDateTime.now()
+        }
     }
 
     @PreUpdate
