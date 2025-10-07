@@ -56,7 +56,7 @@ class AuthorCreator(
                 dateOfBirth = dateOfBirth ?: LocalDate.now().minusYears(SecureRandom().nextInt(100).toLong()),
                 books = mutableSetOf(),
             )
-        entity.createdAt = createdAt ?: ZonedDateTime.now().minusYears(SecureRandom().nextInt(100).toLong())
+        entity.createdAt = createdAt
         return entity
     }
 }
