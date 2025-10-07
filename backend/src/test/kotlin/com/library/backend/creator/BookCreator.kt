@@ -3,36 +3,71 @@ package com.library.backend.creator
 import com.library.backend.dto.book.BookGenre
 import com.library.backend.entity.AuthorEntity
 import com.library.backend.entity.BookEntity
+import com.library.backend.repository.BookRepository
+import org.springframework.stereotype.Component
 import java.security.SecureRandom
 import java.time.LocalDateTime
+import java.util.UUID
 
-class BookCreator {
-    private val book =
+@Component
+class BookCreator(
+    private val bookRepository: BookRepository,
+) {
+    fun create(
+        title: String? = null,
+        isbn: String? = null,
+        genre: BookGenre? = null,
+        creationDateTime: LocalDateTime? = null,
+        publishingDateTime: LocalDateTime? = null,
+    ): BookEntity {
+        val book = createBook(title, isbn, genre, creationDateTime, publishingDateTime)
+        return create(book)
+    }
+
+    fun createWithAuthor(
+        title: String? = null,
+        isbn: String? = null,
+        genre: BookGenre? = null,
+        creationDateTime: LocalDateTime? = null,
+        publishingDateTime: LocalDateTime? = null,
+        author: AuthorEntity,
+    ): BookEntity {
+        val book = createBook(title, isbn, genre, creationDateTime, publishingDateTime)
+        book.addAuthor(author)
+        return create(book)
+    }
+
+    fun createWithAuthors(
+        title: String? = null,
+        isbn: String? = null,
+        genre: BookGenre? = null,
+        creationDateTime: LocalDateTime? = null,
+        publishingDateTime: LocalDateTime? = null,
+        authors: MutableSet<AuthorEntity> = mutableSetOf(),
+    ): BookEntity {
+        val book = createBook(title, isbn, genre, creationDateTime, publishingDateTime)
+        authors.forEach { book.addAuthor(it) }
+        return create(book)
+    }
+
+    fun create(book: BookEntity): BookEntity = bookRepository.save(book)
+
+    private fun createBook(
+        title: String?,
+        isbn: String?,
+        genre: BookGenre?,
+        creationDateTime: LocalDateTime?,
+        publishingDateTime: LocalDateTime?,
+    ): BookEntity =
         BookEntity(
-            title = "Test Title",
-            isbn = BookISBNGenerator.generateISBN(),
-            genre = BookGenreGenerator.generateBookGenre(),
-            creationDateTime = LocalDateTime.now().minusYears(SecureRandom().nextInt(100).toLong()),
-            publishingDateTime = LocalDateTime.now().minusYears(SecureRandom().nextInt(100).toLong()),
+            title = title ?: "Test Title-${UUID.randomUUID()}",
+            isbn = isbn ?: BookISBNGenerator.generateISBN(),
+            genre = genre ?: BookGenreGenerator.generateBookGenre(),
+            creationDateTime = creationDateTime ?: LocalDateTime.now().minusYears(SecureRandom().nextInt(100).toLong()),
+            publishingDateTime =
+                publishingDateTime ?: LocalDateTime
+                    .now()
+                    .minusYears(SecureRandom().nextInt(100).toLong()),
             authors = mutableSetOf(),
         )
-
-    fun withTitle(title: String?) = apply { this.book.title = title }
-
-    fun withIsbn(isbn: String?) = apply { this.book.isbn = isbn }
-
-    fun withGenre(genre: BookGenre?) = apply { this.book.genre = genre }
-
-    fun withCreationDateTime(creationDateTime: LocalDateTime?) = apply { this.book.creationDateTime = creationDateTime }
-
-    fun withPublishingDateTime(publishingDateTime: LocalDateTime?) = apply { this.book.publishingDateTime = publishingDateTime }
-
-    fun withAuthors(authors: MutableSet<AuthorEntity>) = apply { authors.forEach { this.book.addAuthor(it) } }
-
-    fun withBook(author: AuthorEntity) =
-        apply {
-            this.book.addAuthor(author)
-        }
-
-    fun create(): BookEntity = book
 }

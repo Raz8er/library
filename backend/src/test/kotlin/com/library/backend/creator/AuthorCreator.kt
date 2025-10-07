@@ -2,27 +2,52 @@ package com.library.backend.creator
 
 import com.library.backend.entity.AuthorEntity
 import com.library.backend.entity.BookEntity
+import com.library.backend.repository.AuthorRepository
+import org.springframework.stereotype.Component
 import java.security.SecureRandom
 import java.time.LocalDate
 
-class AuthorCreator {
-    private val author =
+@Component
+class AuthorCreator(
+    private val authorRepository: AuthorRepository,
+) {
+    fun create(
+        name: String? = null,
+        dateOfBirth: LocalDate? = null,
+    ): AuthorEntity {
+        val author = createAuthor(name, dateOfBirth)
+        return create(author)
+    }
+
+    fun createWithBook(
+        name: String? = null,
+        dateOfBirth: LocalDate? = null,
+        book: BookEntity,
+    ): AuthorEntity {
+        val author = createAuthor(name, dateOfBirth)
+        author.addBook(book)
+        return create(author)
+    }
+
+    fun createWithBooks(
+        name: String? = null,
+        dateOfBirth: LocalDate? = null,
+        books: MutableSet<BookEntity> = mutableSetOf(),
+    ): AuthorEntity {
+        val author = createAuthor(name, dateOfBirth)
+        books.forEach { author.addBook(it) }
+        return create(author)
+    }
+
+    fun create(author: AuthorEntity): AuthorEntity = authorRepository.save(author)
+
+    private fun createAuthor(
+        name: String?,
+        dateOfBirth: LocalDate?,
+    ): AuthorEntity =
         AuthorEntity(
-            name = "Test Author-${SecureRandom().nextInt()}",
-            dateOfBirth = LocalDate.now().minusYears(SecureRandom().nextInt(100).toLong()),
+            name = name ?: "Test Author-${SecureRandom().nextInt()}",
+            dateOfBirth = dateOfBirth ?: LocalDate.now().minusYears(SecureRandom().nextInt(100).toLong()),
             books = mutableSetOf(),
         )
-
-    fun withName(name: String?) = apply { this.author.name = name }
-
-    fun withDateOfBirth(dateOfBirth: LocalDate?) = apply { this.author.dateOfBirth = dateOfBirth }
-
-    fun withBooks(books: MutableSet<BookEntity>) = apply { books.forEach { this.author.addBook(it) } }
-
-    fun withBook(book: BookEntity) =
-        apply {
-            this.author.addBook(book)
-        }
-
-    fun create(): AuthorEntity = author
 }

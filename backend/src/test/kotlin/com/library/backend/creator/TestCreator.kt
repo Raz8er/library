@@ -1,7 +1,13 @@
 package com.library.backend.creator
 
-object TestCreator {
-    fun author(): AuthorCreator = AuthorCreator()
+import org.springframework.stereotype.Component
 
-    fun book(): BookCreator = BookCreator()
+@Component
+class TestCreator(
+    private val authorCreator: AuthorCreator,
+    private val bookCreator: BookCreator,
+) {
+    fun author(): AuthorCreator = authorCreator
+
+    fun book(): BookCreator = bookCreator
 }

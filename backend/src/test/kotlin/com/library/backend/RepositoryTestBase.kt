@@ -2,6 +2,7 @@ package com.library.backend
 
 import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -13,6 +14,7 @@ import java.sql.DriverManager
 @DataJpaTest
 @Testcontainers
 @ActiveProfiles("test")
+@ComponentScan(basePackages = ["com.library.backend.creator"])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class RepositoryTestBase {
     companion object {

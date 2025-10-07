@@ -16,48 +16,26 @@ class AuthorRepositoryTest : RepositoryTestBase() {
     private lateinit var authorRepository: AuthorRepository
 
     @Autowired
-    private lateinit var bookRepository: BookRepository
+    private lateinit var creator: TestCreator
 
     @Test
     fun `should find authors with number of published books`() {
+        val book1 = creator.book().create(title = "Book1")
+        val book2 = creator.book().create(title = "Book2")
+        val book3 = creator.book().create(title = "Book3")
         val author1 =
-            TestCreator
+            creator
                 .author()
-                .withName("Author1")
-                .withDateOfBirth(LocalDate.now().minusYears(55))
-                .create()
+                .createWithBook(name = "Author1", dateOfBirth = LocalDate.now().minusYears(55), book = book2)
         val author2 =
-            TestCreator
+            creator
                 .author()
-                .withName("Author2")
-                .withDateOfBirth(LocalDate.now().minusYears(35))
-                .create()
-        val author3 =
-            TestCreator
-                .author()
-                .withName("Author3")
-                .withDateOfBirth(LocalDate.now().minusYears(45))
-                .create()
-        authorRepository.save(author3)
-        val book1 =
-            TestCreator
-                .book()
-                .withTitle("Book1")
-                .withAuthors(mutableSetOf(author2))
-                .create()
-        val book2 =
-            TestCreator
-                .book()
-                .withTitle("Book2")
-                .withAuthors(mutableSetOf(author1, author2))
-                .create()
-        val book3 =
-            TestCreator
-                .book()
-                .withTitle("Book3")
-                .withAuthors(mutableSetOf(author2))
-                .create()
-        bookRepository.saveAll(listOf(book1, book2, book3))
+                .createWithBooks(
+                    name = "Author2",
+                    dateOfBirth = LocalDate.now().minusYears(35),
+                    books = mutableSetOf(book1, book2, book3),
+                )
+        val author3 = creator.author().create(name = "Author3", dateOfBirth = LocalDate.now().minusYears(45))
 
         var pageRequest = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "dateOfBirth"))
         val firstPage = authorRepository.findAuthorsWithNumberOfPublishedBooks(pageRequest)
@@ -70,6 +48,19 @@ class AuthorRepositoryTest : RepositoryTestBase() {
         pageRequest = PageRequest.of(2, 1, Sort.by(Sort.Direction.DESC, "dateOfBirth"))
         val lastPage = authorRepository.findAuthorsWithNumberOfPublishedBooks(pageRequest)
         assertPage(author1.name!!, 1, lastPage)
+    }
+
+    @Test
+    fun `should find single author with number of published books`() {
+        val book1 = creator.book().create(title = "Book1")
+        val book2 = creator.book().create(title = "Book2")
+        val book3 = creator.book().create(title = "Book3")
+        val author = creator.author().createWithBooks(name = "Author1", books = mutableSetOf(book1, book2, book3))
+
+        val result = authorRepository.findAuthorWithNumberOfPublishedBooks(author.id!!)
+        assertThat(result).isNotNull
+        assertThat(result!!.name).isEqualTo(author.name)
+        assertThat(result.numberOfPublishedBooks).isEqualTo(3)
     }
 
     private fun assertPage(
