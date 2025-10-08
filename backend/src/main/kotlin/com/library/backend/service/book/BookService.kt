@@ -74,9 +74,9 @@ class BookService(
                     id = cursor?.id ?: Long.MAX_VALUE,
                     pageable = PageRequest.of(0, cursorPageRequest.size!!),
                 )
-        val booksWithAuthors = getBooksWithAuthors(booksPage)
+        val booksWithAuthors = getBooksWithAuthors(booksPage.content)
         val nextCursor = booksWithAuthors.lastOrNull()?.let { BookCursor(it.publishingDateTime, it.id!!).encode() }
-        return CursorPageResponse(booksPage, nextCursor)
+        return CursorPageResponse(booksPage.content, nextCursor)
     }
 
     fun getBookIsbnsByPublishingDateTimeBetween(

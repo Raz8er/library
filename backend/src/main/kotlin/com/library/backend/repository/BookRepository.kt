@@ -2,6 +2,7 @@ package com.library.backend.repository
 
 import com.library.backend.dto.book.BookGenre
 import com.library.backend.entity.BookEntity
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
@@ -41,7 +42,13 @@ interface BookRepository :
             AND (
                 CAST(:publishingDateTime AS timestamp) IS NULL
                 OR b.publishingDateTime < :publishingDateTime
-                OR (b.publishingDateTime = :publishingDateTime AND b.id < :id)
+                OR (
+                    b.publishingDateTime = :publishingDateTime 
+                    AND (
+                        :id IS NULL
+                        OR b.id < :id
+                    )
+                )
             )
         ORDER BY b.publishingDateTime DESC, b.id DESC
     """,
@@ -54,7 +61,7 @@ interface BookRepository :
         publishingDateTime: LocalDateTime?,
         id: Long?,
         pageable: Pageable,
-    ): List<BookEntity>
+    ): Page<BookEntity>
 
     @EntityGraph(attributePaths = ["authors"])
     @Query("SELECT b FROM BookEntity b WHERE b IN (:bookIds)")
