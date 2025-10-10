@@ -4,14 +4,18 @@ import com.library.backend.dto.book.BookGenre
 import com.library.backend.entity.AuthorEntity
 import com.library.backend.entity.BookEntity
 import com.library.backend.repository.BookRepository
+import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.security.SecureRandom
 import java.time.LocalDateTime
 import java.util.UUID
 
 @Component
+@Transactional
 class BookCreator(
     private val bookRepository: BookRepository,
+    private val entityManager: EntityManager,
 ) {
     fun create(
         title: String? = null,
@@ -50,7 +54,12 @@ class BookCreator(
         return create(book)
     }
 
-    fun create(book: BookEntity): BookEntity = bookRepository.save(book)
+    fun create(book: BookEntity): BookEntity {
+        val managedAuthors = book.authors.map { entityManager.merge(it) }.toMutableSet()
+        book.authors.clear()
+        book.authors.addAll(managedAuthors)
+        return bookRepository.save(book)
+    }
 
     private fun createBook(
         title: String?,
