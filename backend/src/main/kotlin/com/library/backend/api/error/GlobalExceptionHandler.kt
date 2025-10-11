@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.http.converter.HttpMessageNotWritableException
+import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
@@ -26,6 +27,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.servlet.resource.NoResourceFoundException
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @RestControllerAdvice
@@ -84,13 +86,26 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     ): ResponseEntity<in Any>? {
         val apiError = ApiError(HttpStatus.BAD_REQUEST, "Malformed JSON request", ex)
         val cause = ex.cause
-        if (cause is InvalidFormatException && cause.targetType == LocalDateTime::class.java) {
+        if (cause is InvalidFormatException) {
             val fieldName = cause.path.joinToString(".") { it.fieldName }
-            apiError.addValidationError(
-                field = fieldName,
-                rejectedValue = cause.value,
-                message = "Field $fieldName has invalid datetime format. Expected format: dd-MM-yyyy HH:mm:ss",
-            )
+
+            when (cause.targetType) {
+                LocalDate::class.java -> {
+                    apiError.addValidationError(
+                        field = fieldName,
+                        rejectedValue = cause.value,
+                        message = "Field $fieldName has invalid date format. Expected format: dd-MM-yyyy",
+                    )
+                }
+
+                LocalDateTime::class.java -> {
+                    apiError.addValidationError(
+                        field = fieldName,
+                        rejectedValue = cause.value,
+                        message = "Field $fieldName has invalid datetime format. Expected format: dd-MM-yyyy HH:mm:ss",
+                    )
+                }
+            }
         } else {
             apiError.debugMessage = ex.localizedMessage
         }
@@ -192,6 +207,13 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         apiError.message =
             "The parameter '${ex.name}' of value '${ex.value}' could not be converted to type '${ex.requiredType?.simpleName}'"
         apiError.debugMessage = ex.message
+        return ResponseEntityUtils.createResponse(apiError, status)
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException::class)
+    fun handleAuthorizationDenied(ex: AuthorizationDeniedException): ResponseEntity<Any?> {
+        val status = HttpStatus.FORBIDDEN
+        val apiError = ApiError(status = status, message = ex.localizedMessage)
         return ResponseEntityUtils.createResponse(apiError, status)
     }
 

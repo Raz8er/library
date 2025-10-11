@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
-import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 data class BookCreateDTO(
@@ -21,7 +20,6 @@ data class BookCreateDTO(
     var genre: BookGenre?,
     @field:NotNull
     @field:JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    @field:DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @field:Schema(example = "25-09-2025 11:12:13", type = "string", format = "datetime")
     var creationDateTime: LocalDateTime?,
     @field:NotEmpty
