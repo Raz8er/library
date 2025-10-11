@@ -61,6 +61,10 @@ class BookCreator(
         return bookRepository.save(book)
     }
 
+    fun deleteAll() {
+        bookRepository.deleteAll()
+    }
+
     private fun createBook(
         title: String?,
         isbn: String?,

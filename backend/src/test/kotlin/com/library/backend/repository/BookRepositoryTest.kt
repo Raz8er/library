@@ -1,10 +1,11 @@
 package com.library.backend.repository
 
-import com.library.backend.RepositoryTestBase
 import com.library.backend.creator.TestCreator
 import com.library.backend.dto.book.BookGenre
 import com.library.backend.entity.BookEntity
+import com.library.backend.testbase.RepositoryTestBase
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -18,6 +19,11 @@ class BookRepositoryTest : RepositoryTestBase() {
 
     @Autowired
     private lateinit var creator: TestCreator
+
+    @BeforeEach
+    fun setUp() {
+        creator.book().deleteAll()
+    }
 
     @Test
     fun `should find book isbns by publishing datetime`() {

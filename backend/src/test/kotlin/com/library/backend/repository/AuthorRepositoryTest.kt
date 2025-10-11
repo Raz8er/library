@@ -1,9 +1,10 @@
 package com.library.backend.repository
 
-import com.library.backend.RepositoryTestBase
 import com.library.backend.creator.TestCreator
 import com.library.backend.entity.projection.AuthorWithPublishedBooksProjection
+import com.library.backend.testbase.RepositoryTestBase
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -18,6 +19,11 @@ class AuthorRepositoryTest : RepositoryTestBase() {
 
     @Autowired
     private lateinit var creator: TestCreator
+
+    @BeforeEach
+    fun setUp() {
+        creator.author().deleteAll()
+    }
 
     @Test
     fun `should find authors with number of published books`() {

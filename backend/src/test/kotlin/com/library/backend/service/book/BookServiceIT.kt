@@ -1,12 +1,13 @@
 package com.library.backend.service.book
 
-import com.library.backend.IntegrationTestBase
 import com.library.backend.creator.BookGenreGenerator
 import com.library.backend.creator.BookISBNGenerator
 import com.library.backend.creator.TestCreator
 import com.library.backend.dto.book.BookCreateDTO
 import com.library.backend.entity.BookEntity
+import com.library.backend.testbase.IntegrationTestBase
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDateTime
@@ -17,6 +18,11 @@ class BookServiceIT : IntegrationTestBase() {
 
     @Autowired
     private lateinit var creator: TestCreator
+
+    @BeforeEach
+    fun setUp() {
+        creator.book().deleteAll()
+    }
 
     @Test
     fun `should create a book`() {

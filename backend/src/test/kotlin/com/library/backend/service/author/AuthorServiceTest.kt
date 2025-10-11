@@ -4,6 +4,7 @@ import com.library.backend.dto.author.AuthorCreateDTO
 import com.library.backend.dto.author.AuthorUpdateDTO
 import com.library.backend.entity.AuthorEntity
 import com.library.backend.entity.projection.AuthorWithPublishedBooksProjection
+import com.library.backend.event.service.EventNotifier
 import com.library.backend.mapper.AuthorMapper.toEntity
 import com.library.backend.repository.AuthorRepository
 import io.mockk.every
@@ -30,6 +31,9 @@ class AuthorServiceTest {
 
     @RelaxedMockK
     private lateinit var authorCacheService: AuthorCacheService
+
+    @RelaxedMockK
+    private lateinit var eventNotifier: EventNotifier
 
     @InjectMockKs
     private lateinit var authorService: AuthorService
@@ -67,7 +71,7 @@ class AuthorServiceTest {
 
         val updatedAuthor = authorService.updateAuthor(existingAuthor.id!!, dto)
 
-        verify(exactly = 1) { authorCacheService.evictAuthor(existingAuthor.id!!) }
+        verify(exactly = 1) { eventNotifier.publishAuthorEvent(existingAuthor.id!!) }
         assertThat(updatedAuthor).usingRecursiveComparison().isEqualTo(authorToUpdate)
     }
 

@@ -1,14 +1,10 @@
-package com.library.backend
+package com.library.backend.testbase
 
-import com.library.backend.TestcontainersExtensions.waitForContainerReady
 import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers
@@ -17,29 +13,8 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class IntegrationTestBase {
     companion object {
-        @Container
-        @JvmStatic
-        val postgresContainer =
-            PostgreSQLContainer<Nothing>("postgres:17.3").apply {
-                withDatabaseName("testdb")
-                withUsername("testuser")
-                withPassword("testpassword")
-                withReuse(true)
-            }
-
-        @Container
-        @JvmStatic
-        val redisContainer =
-            GenericContainer<Nothing>("redis:8.0.4").apply {
-                withExposedPorts(6379)
-                withReuse(true)
-            }
-
-        init {
-            postgresContainer.start()
-            redisContainer.start()
-            postgresContainer.waitForContainerReady()
-        }
+        private val postgresContainer = PostgresContainer
+        private val redisContainer = RedisContainer
 
         @JvmStatic
         @DynamicPropertySource

@@ -4,11 +4,13 @@ import com.library.backend.entity.AuthorEntity
 import com.library.backend.entity.BookEntity
 import com.library.backend.repository.AuthorRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.security.SecureRandom
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
 @Component
+@Transactional
 class AuthorCreator(
     private val authorRepository: AuthorRepository,
 ) {
@@ -44,6 +46,10 @@ class AuthorCreator(
     }
 
     fun create(author: AuthorEntity): AuthorEntity = authorRepository.save(author)
+
+    fun deleteAll() {
+        authorRepository.deleteAll()
+    }
 
     private fun createAuthor(
         name: String?,

@@ -1,11 +1,11 @@
 package com.library.backend.api
 
-import com.library.backend.ControllerTestBase
 import com.library.backend.config.AdminUser
 import com.library.backend.dto.author.AuthorCreateDTO
 import com.library.backend.mapper.AuthorMapper.toDTO
 import com.library.backend.mapper.AuthorMapper.toEntity
 import com.library.backend.service.author.AuthorService
+import com.library.backend.testbase.ControllerTestBase
 import com.library.backend.utils.JWTUtils
 import com.library.backend.utils.TestUser
 import com.ninjasquad.springmockk.MockkBean

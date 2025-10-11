@@ -1,12 +1,14 @@
 package com.library.backend.service
 
-import com.library.backend.IntegrationTestBase
+import com.library.backend.creator.TestCreator
 import com.library.backend.dto.book.BookGenre
 import com.library.backend.entity.AuthorEntity
 import com.library.backend.entity.BookEntity
 import com.library.backend.repository.BookRepository
 import com.library.backend.service.bookreport.BookReportGenerationService
+import com.library.backend.testbase.IntegrationTestBase
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
@@ -18,6 +20,14 @@ class BookReportGenerationServiceIT : IntegrationTestBase() {
 
     @Autowired
     private lateinit var bookReportGenerationService: BookReportGenerationService
+
+    @Autowired
+    private lateinit var creator: TestCreator
+
+    @BeforeEach
+    fun setUp() {
+        creator.book().deleteAll()
+    }
 
     @Test
     fun `should generate a book report`() {

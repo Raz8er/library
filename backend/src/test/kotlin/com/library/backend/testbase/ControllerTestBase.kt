@@ -1,4 +1,4 @@
-package com.library.backend
+package com.library.backend.testbase
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.library.backend.config.AdminUser

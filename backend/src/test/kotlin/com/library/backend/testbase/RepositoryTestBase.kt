@@ -1,14 +1,11 @@
-package com.library.backend
+package com.library.backend.testbase
 
-import com.library.backend.TestcontainersExtensions.waitForContainerReady
 import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @DataJpaTest
@@ -18,20 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class RepositoryTestBase {
     companion object {
-        @Container
-        @JvmStatic
-        val postgresContainer =
-            PostgreSQLContainer<Nothing>("postgres:17.3").apply {
-                withDatabaseName("testdb")
-                withUsername("testuser")
-                withPassword("testpassword")
-                withReuse(true)
-            }
-
-        init {
-            postgresContainer.start()
-            postgresContainer.waitForContainerReady()
-        }
+        private val postgresContainer = PostgresContainer
 
         @JvmStatic
         @DynamicPropertySource
