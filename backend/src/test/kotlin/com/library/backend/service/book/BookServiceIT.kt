@@ -1,11 +1,11 @@
 package com.library.backend.service.book
 
-import com.library.backend.creator.BookGenreGenerator
-import com.library.backend.creator.BookISBNGenerator
 import com.library.backend.creator.TestCreator
 import com.library.backend.dto.book.BookCreateDTO
 import com.library.backend.entity.BookEntity
 import com.library.backend.testbase.IntegrationTestBase
+import com.library.backend.utils.BookGenreGenerator
+import com.library.backend.utils.BookISBNGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

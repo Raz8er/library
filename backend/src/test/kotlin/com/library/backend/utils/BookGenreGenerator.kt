@@ -1,4 +1,4 @@
-package com.library.backend.creator
+package com.library.backend.utils
 
 import com.library.backend.dto.book.BookGenre
 import java.security.SecureRandom

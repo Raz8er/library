@@ -4,6 +4,8 @@ import com.library.backend.dto.book.BookGenre
 import com.library.backend.entity.AuthorEntity
 import com.library.backend.entity.BookEntity
 import com.library.backend.repository.BookRepository
+import com.library.backend.utils.BookGenreGenerator
+import com.library.backend.utils.BookISBNGenerator
 import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional

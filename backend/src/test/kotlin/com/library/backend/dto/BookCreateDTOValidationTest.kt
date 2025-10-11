@@ -1,8 +1,8 @@
 package com.library.backend.dto
 
-import com.library.backend.creator.BookGenreGenerator
-import com.library.backend.creator.BookISBNGenerator
 import com.library.backend.dto.book.BookCreateDTO
+import com.library.backend.utils.BookGenreGenerator
+import com.library.backend.utils.BookISBNGenerator
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import org.junit.jupiter.params.ParameterizedTest
