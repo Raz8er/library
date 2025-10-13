@@ -26,7 +26,7 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.util.*
+import java.util.UUID
 
 @Configuration
 @EnableWebSecurity
@@ -51,8 +51,13 @@ class SecurityConfig {
         http
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers(HttpMethod.GET, "/api/v1/jwks.json")
-                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/v1/jwks.json",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                    ).permitAll()
                     .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/clients",
