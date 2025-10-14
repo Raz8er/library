@@ -1,0 +1,31 @@
+enum BookGenre {
+    ROMANCE
+    THRILLER
+    COMEDY
+    FANTASY
+    HISTORY
+    SCI_FI
+}
+
+type Book {
+    id: ID!
+    title: String!
+    isbn: String!
+    genre: BookGenre!
+    creationDateTime: LocalDateTime!
+    publishingDateTime: LocalDateTime!
+    authors: [Author!]
+}
+
+input BookCreate {
+    title: String!
+    isbn: String!
+    genre: BookGenre!
+    creationDateTime: LocalDateTime!
+    publishingDateTime: LocalDateTime!
+    authorIds: [Int!]
+}
+
+extend type Mutation {
+    publishBook(bookCreate: BookCreate!): Book
+}

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.graphql.execution.RuntimeWiringConfigurer
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -27,10 +28,22 @@ class GraphQLScalarsConfig {
             .build()
 
     @Bean
-    fun runtimeWiringConfigurer(localDateScalar: GraphQLScalarType) =
-        RuntimeWiringConfigurer { builder ->
-            builder.scalar(localDateScalar)
-        }
+    fun localDateTimeScalar(): GraphQLScalarType =
+        GraphQLScalarType
+            .newScalar()
+            .name("LocalDateTime")
+            .description("LocalDateTime custom scalar with ${DateTimeUtils.DATE_TIME_FORMAT} format")
+            .coercing(DateTimeCoercing())
+            .build()
+
+    @Bean
+    fun runtimeWiringConfigurer(
+        localDateScalar: GraphQLScalarType,
+        localDateTimeScalar: GraphQLScalarType,
+    ) = RuntimeWiringConfigurer { builder ->
+        builder.scalar(localDateScalar)
+        builder.scalar(localDateTimeScalar)
+    }
 
     class DateCoercing : Coercing<LocalDate, String> {
         private val dateFormatter = DateTimeFormatter.ofPattern(DateTimeUtils.DATE_FORMAT)
@@ -55,6 +68,36 @@ class GraphQLScalarsConfig {
         ): LocalDate {
             if (input is StringValue) {
                 return LocalDate.parse(input.value, dateFormatter)
+            }
+            throw CoercingParseLiteralException(
+                "Expected AST type 'StringValue' but was '${input::class.simpleName}'.",
+            )
+        }
+    }
+
+    class DateTimeCoercing : Coercing<LocalDateTime, String> {
+        private val dateTimeFormatter = DateTimeFormatter.ofPattern(DateTimeUtils.DATE_TIME_FORMAT)
+
+        override fun serialize(
+            dataFetcherResult: Any,
+            graphQLContext: GraphQLContext,
+            locale: Locale,
+        ): String = (dataFetcherResult as LocalDateTime).format(dateTimeFormatter)
+
+        override fun parseValue(
+            input: Any,
+            graphQLContext: GraphQLContext,
+            locale: Locale,
+        ): LocalDateTime = LocalDateTime.parse(input.toString(), dateTimeFormatter)
+
+        override fun parseLiteral(
+            input: Value<*>,
+            variables: CoercedVariables,
+            graphQLContext: GraphQLContext,
+            locale: Locale,
+        ): LocalDateTime {
+            if (input is StringValue) {
+                return LocalDateTime.parse(input.value, dateTimeFormatter)
             }
             throw CoercingParseLiteralException(
                 "Expected AST type 'StringValue' but was '${input::class.simpleName}'.",

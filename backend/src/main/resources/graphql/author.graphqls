@@ -1,5 +1,3 @@
-scalar LocalDate
-
 type Author {
     id: ID!
     name: String!
@@ -16,11 +14,7 @@ input AuthorUpdate {
     dateOfBirth: LocalDate
 }
 
-type Query {
-    _dummy: String
-}
-
-type Mutation {
+extend type Mutation {
     createAuthor(authorCreate: AuthorCreate!): Author
     updateAuthor(id: ID!, authorUpdate: AuthorUpdate!): Author
 }
