@@ -6,6 +6,7 @@ import com.library.backend.mapper.AuthorMapper.toDTO
 import com.library.backend.mapper.AuthorMapper.toEntity
 import com.library.backend.service.author.AuthorService
 import com.library.backend.testbase.ControllerTestBase
+import com.library.backend.utils.DateTimeUtils
 import com.library.backend.utils.JWTUtils
 import com.library.backend.utils.TestUser
 import com.ninjasquad.springmockk.MockkBean
@@ -162,7 +163,7 @@ class AuthorControllerTest : ControllerTestBase() {
                 jsonPath("$.message").value("Malformed JSON request")
                 jsonPath("$.subErrors[0].field").value("dateOfBirth")
                 jsonPath("$.subErrors[0].message") {
-                    value(containsStringIgnoringCase("expected format: dd-MM-yyyy"))
+                    value(containsStringIgnoringCase("expected format: ${DateTimeUtils.DATE_FORMAT}"))
                 }
             }
     }

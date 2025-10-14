@@ -1,0 +1,26 @@
+scalar LocalDate
+
+type Author {
+    id: ID!
+    name: String!
+    dateOfBirth: LocalDate!
+}
+
+input AuthorCreate {
+    name: String!
+    dateOfBirth: LocalDate!
+}
+
+input AuthorUpdate {
+    name: String
+    dateOfBirth: LocalDate
+}
+
+type Query {
+    _dummy: String
+}
+
+type Mutation {
+    createAuthor(authorCreate: AuthorCreate!): Author
+    updateAuthor(id: ID!, authorUpdate: AuthorUpdate!): Author
+}

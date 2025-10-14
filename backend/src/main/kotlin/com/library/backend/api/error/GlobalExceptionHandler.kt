@@ -1,6 +1,7 @@
 package com.library.backend.api.error
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
+import com.library.backend.utils.DateTimeUtils
 import com.library.backend.utils.ResponseEntityUtils
 import jakarta.persistence.EntityNotFoundException
 import jakarta.validation.ConstraintViolationException
@@ -94,7 +95,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
                     apiError.addValidationError(
                         field = fieldName,
                         rejectedValue = cause.value,
-                        message = "Field $fieldName has invalid date format. Expected format: dd-MM-yyyy",
+                        message = "Field $fieldName has invalid date format. Expected format: ${DateTimeUtils.DATE_FORMAT}",
                     )
                 }
 
@@ -102,7 +103,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
                     apiError.addValidationError(
                         field = fieldName,
                         rejectedValue = cause.value,
-                        message = "Field $fieldName has invalid datetime format. Expected format: dd-MM-yyyy HH:mm:ss",
+                        message = "Field $fieldName has invalid datetime format. Expected format: ${DateTimeUtils.DATE_TIME_FORMAT}",
                     )
                 }
             }

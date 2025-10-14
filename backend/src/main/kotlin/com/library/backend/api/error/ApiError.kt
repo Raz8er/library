@@ -1,6 +1,7 @@
 package com.library.backend.api.error
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.library.backend.utils.DateTimeUtils
 import jakarta.validation.ConstraintViolation
 import org.hibernate.validator.internal.engine.path.PathImpl
 import org.springframework.http.HttpStatus
@@ -10,7 +11,7 @@ import java.time.LocalDateTime
 
 data class ApiError(
     var status: HttpStatus? = null,
-    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeUtils.DATE_TIME_FORMAT)
     var timestamp: LocalDateTime = LocalDateTime.now(),
     var message: String? = null,
     var debugMessage: String? = null,

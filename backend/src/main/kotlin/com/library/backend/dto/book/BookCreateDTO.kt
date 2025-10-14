@@ -1,6 +1,7 @@
 package com.library.backend.dto.book
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.library.backend.utils.DateTimeUtils
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
@@ -19,7 +20,7 @@ data class BookCreateDTO(
     @field:NotNull
     var genre: BookGenre?,
     @field:NotNull
-    @field:JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @field:JsonFormat(pattern = DateTimeUtils.DATE_TIME_FORMAT)
     @field:Schema(example = "25-09-2025 11:12:13", type = "string", format = "datetime")
     var creationDateTime: LocalDateTime?,
     @field:NotEmpty

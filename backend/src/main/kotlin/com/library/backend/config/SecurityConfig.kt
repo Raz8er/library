@@ -34,6 +34,8 @@ class SecurityConfig(
                         "/swagger-ui.html",
                         "/swagger-ui/**",
                     ).permitAll()
+                    .requestMatchers("/graphql")
+                    .permitAll()
                     .anyRequest()
                     .authenticated()
             }.oauth2ResourceServer { oauth2 ->
