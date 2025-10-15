@@ -1,0 +1,37 @@
+type AuthorWithPublishedBooks {
+    id: ID
+    name: String
+    dateOfBirth: LocalDate
+    createdAt: LocalDateTime
+    numberOfPublishedBooks: Int
+}
+
+type AuthorPage implements Page {
+    pageInfo: PageInfo!
+    content: [AuthorWithPublishedBooks!]!
+}
+
+type BookPage implements Page {
+    pageInfo: PageInfo!
+    content: [Book!]!
+}
+
+input BookFilterInput {
+    title: String
+    isbn: String
+    genre: BookGenre
+    author: String
+}
+
+extend type Query {
+    getAuthors(pageNumber: Int = 0, pageSize: Int = 10, sort: [SortInput!]): AuthorPage!
+    searchBooks(
+        title: String
+        isbn: String
+        genre: BookGenre
+        author:String
+        pageNumber: Int = 0,
+        pageSize: Int = 10,
+        sort: [SortInput!]
+    ): BookPage!
+}

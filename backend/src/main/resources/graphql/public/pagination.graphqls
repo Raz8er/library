@@ -1,0 +1,20 @@
+type PageInfo {
+    pageNumber: Int!
+    pageSize: Int!
+    totalPages: Int!
+    totalElements: Int!
+}
+
+interface Page {
+    pageInfo: PageInfo!
+}
+
+enum SortDirection {
+    ASC
+    DESC
+}
+
+input SortInput {
+    field: String
+    direction: SortDirection = DESC
+}
