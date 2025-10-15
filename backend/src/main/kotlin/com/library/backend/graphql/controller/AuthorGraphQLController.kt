@@ -3,11 +3,9 @@ package com.library.backend.graphql.controller
 import com.library.backend.dto.author.AuthorCreateDTO
 import com.library.backend.dto.author.AuthorDTO
 import com.library.backend.dto.author.AuthorUpdateDTO
-import com.library.backend.graphql.model.author.AuthorCreate
-import com.library.backend.graphql.model.author.AuthorUpdate
 import com.library.backend.mapper.AuthorMapper.toDTO
 import com.library.backend.service.author.AuthorService
-import jakarta.validation.Valid
+import com.library.backend.utils.GraphQLValidationUtils
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.security.access.prepost.PreAuthorize
@@ -20,27 +18,19 @@ class AuthorGraphQLController(
     @MutationMapping
     @PreAuthorize("hasAuthority('SCOPE_admin') or hasRole('ADMIN')")
     fun createAuthor(
-        @Argument authorCreate: @Valid AuthorCreate,
+        @Argument authorCreate: AuthorCreateDTO,
     ): AuthorDTO {
-        val dto =
-            AuthorCreateDTO(
-                name = authorCreate.name,
-                dateOfBirth = authorCreate.dateOfBirth,
-            )
-        return authorService.createAuthor(dto).toDTO()
+        GraphQLValidationUtils.validate(authorCreate)
+        return authorService.createAuthor(authorCreate).toDTO()
     }
 
     @MutationMapping
     @PreAuthorize("hasAuthority('SCOPE_admin') or hasRole('ADMIN')")
     fun updateAuthor(
         @Argument id: Long,
-        @Argument authorUpdate: @Valid AuthorUpdate,
+        @Argument authorUpdate: AuthorUpdateDTO,
     ): AuthorDTO {
-        val dto =
-            AuthorUpdateDTO(
-                name = authorUpdate.name,
-                dateOfBirth = authorUpdate.dateOfBirth,
-            )
-        return authorService.updateAuthor(id, dto).toDTO()
+        GraphQLValidationUtils.validate(authorUpdate)
+        return authorService.updateAuthor(id, authorUpdate).toDTO()
     }
 }
