@@ -20,20 +20,24 @@ class GraphQLExceptionHandler : DataFetcherExceptionResolverAdapter() {
         env: DataFetchingEnvironment,
     ): GraphQLError? =
         when (ex) {
-            is EntityNotFoundException -> toGraphQLError(ex)
+            is EntityNotFoundException -> toGraphQLError(ex, ex.message!!)
             is ConstraintViolationException -> handleConstraintViolationException(ex)
             is MethodArgumentNotValidException -> handleMethodArgumentNotValidException(ex)
             is GraphQLValidationException -> handleValidationException(ex)
-            is Exception -> toGraphQLError(ex)
+            is Exception -> toGraphQLError(ex, ex.message!!)
             else -> super.resolveToSingleError(ex, env)
         }
 
-    private fun toGraphQLError(ex: Throwable): GraphQLError {
-        log.warn("Exception while handling request: ${ex.message}", ex)
+    private fun toGraphQLError(
+        ex: Throwable,
+        message: String,
+        errorType: ErrorType = ErrorType.DataFetchingException,
+    ): GraphQLError {
+        log.error("GQL exception", ex)
         return GraphqlErrorBuilder
             .newError()
-            .message(ex.message)
-            .errorType(ErrorType.DataFetchingException)
+            .message(message)
+            .errorType(errorType)
             .build()
     }
 
@@ -45,24 +49,18 @@ class GraphQLExceptionHandler : DataFetcherExceptionResolverAdapter() {
             )
         }
         val message = errorMessages.joinToString("\n")
-        log.warn("Exception while handling request: $message", ex)
-        return GraphqlErrorBuilder
-            .newError()
-            .message(message)
-            .errorType(ErrorType.DataFetchingException)
-            .build()
+        log.error("GQL constraint violation exception", ex)
+        return toGraphQLError(ex, message)
     }
 
-    private fun handleMethodArgumentNotValidException(ex: MethodArgumentNotValidException): GraphQLError =
-        GraphQLError
-            .newError()
-            .message("Validation failed: ${ex.bindingResult.allErrors.joinToString { it.defaultMessage ?: "" }}")
-            .build()
+    private fun handleMethodArgumentNotValidException(ex: MethodArgumentNotValidException): GraphQLError {
+        log.error("GQL method argument not valid exception", ex)
+        val message = "Validation failed: ${ex.bindingResult.allErrors.joinToString { it.defaultMessage ?: "" }}"
+        return toGraphQLError(ex, message)
+    }
 
-    private fun handleValidationException(ex: GraphQLValidationException): GraphQLError =
-        GraphQLError
-            .newError()
-            .errorType(ErrorType.ValidationError)
-            .message(ex.message)
-            .build()
+    private fun handleValidationException(ex: GraphQLValidationException): GraphQLError {
+        log.error("GQL validation exception", ex)
+        return toGraphQLError(ex, ex.message, ErrorType.ValidationError)
+    }
 }

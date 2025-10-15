@@ -1,5 +1,6 @@
 package com.library.backend.graphql.config
 
+import com.library.backend.graphql.exception.GraphQLValidationException
 import com.library.backend.utils.DateTimeUtils
 import graphql.GraphQLContext
 import graphql.execution.CoercedVariables
@@ -14,6 +15,7 @@ import org.springframework.graphql.execution.RuntimeWiringConfigurer
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
 
 @Configuration
@@ -58,7 +60,12 @@ class GraphQLScalarsConfig {
             input: Any,
             graphQLContext: GraphQLContext,
             locale: Locale,
-        ): LocalDate = LocalDate.parse(input.toString(), dateFormatter)
+        ): LocalDate =
+            try {
+                LocalDate.parse(input.toString(), dateFormatter)
+            } catch (_: DateTimeParseException) {
+                throw GraphQLValidationException("Invalid date format for value: $input, should be ${DateTimeUtils.DATE_FORMAT}")
+            }
 
         override fun parseLiteral(
             input: Value<*>,
@@ -67,7 +74,11 @@ class GraphQLScalarsConfig {
             locale: Locale,
         ): LocalDate {
             if (input is StringValue) {
-                return LocalDate.parse(input.value, dateFormatter)
+                return try {
+                    LocalDate.parse(input.value, dateFormatter)
+                } catch (_: DateTimeParseException) {
+                    throw GraphQLValidationException("Invalid date format for value: $input, should be ${DateTimeUtils.DATE_FORMAT}")
+                }
             }
             throw CoercingParseLiteralException(
                 "Expected AST type 'StringValue' but was '${input::class.simpleName}'.",
@@ -88,7 +99,12 @@ class GraphQLScalarsConfig {
             input: Any,
             graphQLContext: GraphQLContext,
             locale: Locale,
-        ): LocalDateTime = LocalDateTime.parse(input.toString(), dateTimeFormatter)
+        ): LocalDateTime =
+            try {
+                LocalDateTime.parse(input.toString(), dateTimeFormatter)
+            } catch (_: DateTimeParseException) {
+                throw GraphQLValidationException("Invalid datetime format for value: $input, should be ${DateTimeUtils.DATE_TIME_FORMAT}")
+            }
 
         override fun parseLiteral(
             input: Value<*>,
@@ -97,7 +113,13 @@ class GraphQLScalarsConfig {
             locale: Locale,
         ): LocalDateTime {
             if (input is StringValue) {
-                return LocalDateTime.parse(input.value, dateTimeFormatter)
+                return try {
+                    LocalDateTime.parse(input.value, dateTimeFormatter)
+                } catch (_: DateTimeParseException) {
+                    throw GraphQLValidationException(
+                        "Invalid datetime format for value: $input, should be ${DateTimeUtils.DATE_TIME_FORMAT}",
+                    )
+                }
             }
             throw CoercingParseLiteralException(
                 "Expected AST type 'StringValue' but was '${input::class.simpleName}'.",
