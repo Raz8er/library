@@ -4,7 +4,6 @@ import com.library.backend.testbase.GraphQLTestBase
 import com.library.backend.utils.GraphQLTestUtils
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
-import java.time.LocalDate
 
 class AuthorGraphQLControllerIT : GraphQLTestBase() {
     @Test
