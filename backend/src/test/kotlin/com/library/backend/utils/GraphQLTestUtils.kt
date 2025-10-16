@@ -1,5 +1,8 @@
 package com.library.backend.utils
 
+import com.library.backend.dto.book.BookGenre
+import java.time.LocalDateTime
+
 object GraphQLTestUtils {
     fun createAuthorMutation(
         name: String,
@@ -26,6 +29,32 @@ object GraphQLTestUtils {
                 id
                 name
                 dateOfBirth
+            }
+        }
+        """.trimIndent()
+
+    fun createBookMutation(
+        title: String,
+        isbn: String,
+        genre: BookGenre,
+        creationDateTime: String,
+        publishingDateTime: String,
+        authorIds: List<Long>,
+    ): String =
+        """
+        mutation {
+            publishBook(bookCreate: { title: "$title", isbn: "$isbn", genre: $genre, creationDateTime: "$creationDateTime", publishingDateTime: "$publishingDateTime", authorIds: $authorIds }) {
+                id
+                title
+                isbn
+                genre
+                creationDateTime
+                publishingDateTime
+                authors {
+                    id
+                    name
+                    dateOfBirth
+                }
             }
         }
         """.trimIndent()

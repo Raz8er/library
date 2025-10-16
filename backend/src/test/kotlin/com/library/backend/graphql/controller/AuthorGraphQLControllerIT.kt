@@ -7,7 +7,7 @@ import org.springframework.security.test.context.support.WithMockUser
 
 class AuthorGraphQLControllerIT : GraphQLTestBase() {
     @Test
-    @WithMockUser(authorities = ["SCOPE_admin"])
+    @WithMockUser(roles = ["ADMIN"])
     fun `should create author via GQL interface`() {
         val mutation = GraphQLTestUtils.createAuthorMutation("John Doe", "05-07-1982")
         graphQlTester
@@ -19,7 +19,7 @@ class AuthorGraphQLControllerIT : GraphQLTestBase() {
     }
 
     @Test
-    @WithMockUser(authorities = ["SCOPE_admin"])
+    @WithMockUser(roles = ["ADMIN"])
     fun `should update author via GQL interface`() {
         val createAuthorMutation = GraphQLTestUtils.createAuthorMutation("John Doe", "05-07-1982")
         val exisingAuthor =
