@@ -2,6 +2,7 @@ package com.library.backend.mapper
 
 import com.library.backend.dto.book.BookCreateDTO
 import com.library.backend.dto.book.BookDTO
+import com.library.backend.dto.book.BookGenre
 import com.library.backend.entity.BookEntity
 import com.library.backend.mapper.AuthorMapper.toDTO
 import com.library.backend.mapper.AuthorMapper.toEntity
@@ -35,7 +36,7 @@ object BookMapper {
         BookEntity(
             title = this.title,
             isbn = this.isbn,
-            genre = this.genre,
+            genre = BookGenre.getEnumValue(this.genre),
             creationDateTime = this.creationDateTime,
         )
 }

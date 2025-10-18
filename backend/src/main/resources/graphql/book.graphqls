@@ -22,7 +22,6 @@ input BookCreate {
     isbn: String!
     genre: BookGenre!
     creationDateTime: LocalDateTime!
-    publishingDateTime: LocalDateTime!
     authorIds: [Int!]
 }
 
