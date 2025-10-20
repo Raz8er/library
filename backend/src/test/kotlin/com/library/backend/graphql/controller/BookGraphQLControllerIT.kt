@@ -26,7 +26,6 @@ class BookGraphQLControllerIT : GraphQLTestBase() {
                 isbn = BookISBNGenerator.generateISBN(),
                 genre = BookGenreGenerator.generateBookGenre(),
                 creationDateTime = "28-09-1975 12:43:51",
-                publishingDateTime = "28-09-1985 12:43:51",
                 authorIds = listOf(author1.id!!, author2.id!!),
             )
         graphQlTester

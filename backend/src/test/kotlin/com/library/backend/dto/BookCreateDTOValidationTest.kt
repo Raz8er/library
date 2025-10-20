@@ -23,7 +23,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = null,
                         isbn = BookISBNGenerator.generateISBN(),
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                     ),
                     "title",
@@ -32,7 +32,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = "",
                         isbn = BookISBNGenerator.generateISBN(),
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                     ),
                     "title",
@@ -41,7 +41,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = " ",
                         isbn = BookISBNGenerator.generateISBN(),
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                     ),
                     "title",
@@ -50,7 +50,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = "The Lord of the Rings",
                         isbn = null,
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                     ),
                     "isbn",
@@ -59,7 +59,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = "The Lord of the Rings",
                         isbn = "",
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                     ),
                     "isbn",
@@ -68,7 +68,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = "The Lord of the Rings",
                         isbn = " ",
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                     ),
                     "isbn",
@@ -77,7 +77,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = "The Lord of the Rings",
                         isbn = "123456789",
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                     ),
                     "isbn",
@@ -95,7 +95,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = "The Lord of the Rings",
                         isbn = BookISBNGenerator.generateISBN(),
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = null,
                     ),
                     "creationDateTime",
@@ -104,7 +104,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = "The Lord of the Rings",
                         isbn = BookISBNGenerator.generateISBN(),
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                         authorIds = null,
                     ),
@@ -114,7 +114,7 @@ class BookCreateDTOValidationTest {
                     BookCreateDTO(
                         title = "The Lord of the Rings",
                         isbn = BookISBNGenerator.generateISBN(),
-                        genre = BookGenreGenerator.generateBookGenre(),
+                        genre = BookGenreGenerator.generateBookGenre().name,
                         creationDateTime = LocalDateTime.now(),
                         authorIds = mutableSetOf(),
                     ),

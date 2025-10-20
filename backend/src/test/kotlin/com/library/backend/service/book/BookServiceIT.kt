@@ -32,7 +32,7 @@ class BookServiceIT : IntegrationTestBase() {
             BookCreateDTO(
                 title = "Book1",
                 isbn = BookISBNGenerator.generateISBN(),
-                genre = BookGenreGenerator.generateBookGenre(),
+                genre = BookGenreGenerator.generateBookGenre().name,
                 creationDateTime = LocalDateTime.now().minusDays(55),
                 authorIds = mutableSetOf(author1.id!!, author2.id!!),
             )
@@ -53,7 +53,7 @@ class BookServiceIT : IntegrationTestBase() {
             BookCreateDTO(
                 title = savedBook.title,
                 isbn = savedBook.isbn,
-                genre = savedBook.genre,
+                genre = savedBook.genre!!.name,
                 creationDateTime = savedBook.creationDateTime,
                 authorIds = savedBook.authors.map { it.id!! }.toMutableSet(),
             )

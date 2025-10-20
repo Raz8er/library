@@ -37,12 +37,11 @@ object GraphQLTestUtils {
         isbn: String,
         genre: BookGenre,
         creationDateTime: String,
-        publishingDateTime: String,
         authorIds: List<Long>,
     ): String =
         """
         mutation {
-            publishBook(bookCreate: { title: "$title", isbn: "$isbn", genre: $genre, creationDateTime: "$creationDateTime", publishingDateTime: "$publishingDateTime", authorIds: $authorIds }) {
+            publishBook(bookCreate: { title: "$title", isbn: "$isbn", genre: $genre, creationDateTime: "$creationDateTime", authorIds: $authorIds }) {
                 id
                 title
                 isbn
